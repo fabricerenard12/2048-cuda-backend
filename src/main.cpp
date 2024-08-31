@@ -28,15 +28,11 @@ int main() {
                 GameStateMessage response;
 
                 if (receivedMessage.ParseFromArray(msg.data(), msg.size())) {
-                    std::cout << "Received Game State: " << receivedMessage.game_state() << std::endl;
-					std::cout << "Received Score: " << receivedMessage.score() << std::endl;
-					
 					if (receivedMessage.game_state().size() != 64) {
         				throw std::invalid_argument("The string must contain exactly 64 characters.");
     				}
     
     				std::bitset<64> gameState = std::bitset<64>(receivedMessage.game_state());
-                    std::cout << gameState << std::endl;
 
 					Game game = Game();
 					game.setGrid(gameState.to_ullong());
@@ -44,18 +40,15 @@ int main() {
 
 					Move bestMove = performMC(
 						game,
-						400,
+						300,
 						20
 					);
-
-                    std::cout << static_cast<int>(bestMove) << std::endl;
 
 					game.makeMove(bestMove);
 
                     std::bitset<64> newGameState = std::bitset<64>(game.getGrid());
                     std::string serializedResponse;
 
-			        std::cout << newGameState.to_string() << std::endl;
                     response.set_game_state(newGameState.to_string());
 			        response.set_score(game.getScore());
 
